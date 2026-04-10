@@ -62,14 +62,15 @@ jobs:
 
       # Restore NuGet packages and generate dependency metadata
       # This creates project.assets.json which contains the full dependency graph
+      # Targets the backend project specifically
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore backend/backend.csproj
 
       # Verify that project.assets.json was generated correctly
       # This file contains the complete dependency information needed for clearing
       - name: Verify project.assets.json
         run: |
-          find . -name project.assets.json
+          find backend -name project.assets.json
 
       # Upload the restored project folders as pipeline artifact
       # The 'cc-input' artifact contains all project metadata needed for Continuous Clearing
