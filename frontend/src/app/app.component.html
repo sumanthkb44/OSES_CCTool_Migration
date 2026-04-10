@@ -1,0 +1,31 @@
+<mat-toolbar color="primary">
+  <mat-icon class="toolbar-icon">code</mat-icon>
+  <span>{{ title }}</span>
+  <span class="spacer"></span>
+  
+  <nav class="nav-links">
+    <a mat-button routerLink="/home" routerLinkActive="active-link">
+      <mat-icon>home</mat-icon>
+      Home
+    </a>
+    <a mat-button routerLink="/continuous-clearing" routerLinkActive="active-link">
+      <mat-icon>security</mat-icon>
+      Continuous Clearing
+    </a>
+    <a mat-button routerLink="/cicd-demo" routerLinkActive="active-link">
+      <mat-icon>settings</mat-icon>
+      CI/CD Demo
+    </a>
+  </nav>
+</mat-toolbar>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>OSES Migration Demo - Educational Application | © 2026</p>
+    <p>Built with Angular & ASP.NET Core</p>
+  </div>
+</footer>

@@ -1,0 +1,142 @@
+<div class="container">
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading Continuous Clearing information...</p>
+  </div>
+
+  <!-- Error message -->
+  <mat-card *ngIf="error" class="error-card">
+    <mat-card-content>
+      <h2>⚠️ Error</h2>
+      <p>{{ error }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Continuous Clearing Content -->
+  <div *ngIf="!loading && clearingData">
+    <mat-card class="hero-card">
+      <mat-card-content>
+        <h1>{{ clearingData.title }}</h1>
+        <p class="tagline">{{ clearingData.tagline }}</p>
+        <p class="description">{{ clearingData.description }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Workflow Steps -->
+    <mat-card>
+      <mat-card-content>
+        <h2>🔄 Continuous Clearing Workflow</h2>
+        <div class="workflow-diagram">
+┌──────────────┐
+│  Code Commit │
+└──────┬───────┘
+       │
+       v
+┌──────────────────────────┐
+│  CI/CD Pipeline Trigger  │
+└──────┬───────────────────┘
+       │
+       v
+┌──────────────────────────────────┐
+│  Continuous Clearing Action      │
+│  (5 automated steps below)       │
+└──────┬───────────────────────────┘
+       │
+       v
+┌──────────────────┐
+│  Pass/Fail Gate  │
+└──────┬───────────┘
+       │
+       v
+┌──────────────────┐
+│  Deploy to Prod  │
+└──────────────────┘
+        </div>
+
+        <mat-accordion class="workflow-accordion">
+          <mat-expansion-panel *ngFor="let step of clearingData.workflow">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <strong>Step {{ step.step }}: {{ step.name }}</strong>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ step.description }}</p>
+            <div *ngIf="step.tools">
+              <strong>Tools:</strong>
+              <mat-chip-set>
+                <mat-chip *ngFor="let tool of step.tools">{{ tool }}</mat-chip>
+              </mat-chip-set>
+            </div>
+            <div *ngIf="step.output">
+              <strong>Output:</strong> {{ step.output }}
+            </div>
+            <div *ngIf="step.criteria">
+              <strong>Policy Criteria:</strong>
+              <ul>
+                <li *ngFor="let criterion of step.criteria">{{ criterion }}</li>
+              </ul>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- SBOM Formats -->
+    <mat-card>
+      <mat-card-content>
+        <h2>📄 SBOM Formats</h2>
+        <p>Continuous Clearing generates Software Bill of Materials (SBOM) in industry-standard formats:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Format</th>
+              <th>Description</th>
+              <th>File Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let format of clearingData.sbomFormats">
+              <td><strong>{{ format.format }}</strong></td>
+              <td>{{ format.description }}</td>
+              <td><code>{{ format.fileType }}</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Benefits -->
+    <mat-card>
+      <mat-card-content>
+        <h2>✨ Benefits</h2>
+        <div class="benefits-grid">
+          <div *ngFor="let benefit of clearingData.benefits" class="benefit-item">
+            <span class="benefit-icon">✓</span>
+            <span>{{ benefit }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Integration Points -->
+    <mat-card>
+      <mat-card-content>
+        <h2>🔗 Integration Points</h2>
+        <ul class="integration-list">
+          <li *ngFor="let integration of clearingData.integrationPoints">
+            {{ integration }}
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Next Steps -->
+    <mat-card class="cta-card">
+      <mat-card-content>
+        <h3>🚀 See it in action!</h3>
+        <p>Navigate to the <strong>CI/CD Demo</strong> page to see how Continuous Clearing integrates with GitHub Actions as a reusable workflow.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="container">
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading OSES overview...</p>
+  </div>
+
+  <!-- Error message -->
+  <mat-card *ngIf="error" class="error-card">
+    <mat-card-content>
+      <h2>⚠️ Error</h2>
+      <p>{{ error }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- OSES Overview Content -->
+  <div *ngIf="!loading && osesData">
+    <mat-card class="hero-card">
+      <mat-card-content>
+        <h1>{{ osesData.title }}</h1>
+        <p class="subtitle">{{ osesData.description }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Key Benefits -->
+    <mat-card>
+      <mat-card-content>
+        <h2>✨ Key Benefits</h2>
+        <ul class="benefits-list">
+          <li *ngFor="let benefit of osesData.keyBenefits">{{ benefit }}</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Migration Phases -->
+    <mat-card>
+      <mat-card-content>
+        <h2>🗺️ Migration Phases</h2>
+        <div class="phases-container">
+          <div *ngFor="let phase of osesData.migrationPhases" class="phase-card">
+            <div class="phase-number">{{ phase.phase }}</div>
+            <div class="phase-content">
+              <h3>{{ phase.name }}</h3>
+              <p>{{ phase.description }}</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Core Components -->
+    <mat-card>
+      <mat-card-content>
+        <h2>🔧 Core Components</h2>
+        <div class="components-grid">
+          <mat-chip-set>
+            <mat-chip *ngFor="let component of osesData.coreComponents" class="component-chip">
+              {{ component }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Workflow Diagram -->
+    <mat-card>
+      <mat-card-content>
+        <h2>📊 Migration Journey</h2>
+        <div class="diagram">
+┌─────────────────┐       ┌──────────────────┐       ┌─────────────────┐
+│  Legacy Stack   │  -->  │  OSES Migration  │  -->  │  Modern Stack   │
+│                 │       │                  │       │                 │
+│ - Manual checks │       │ - Automate steps │       │ - CI/CD Native  │
+│ - Local tools   │       │ - Standardize    │       │ - Cloud-ready   │
+│ - Ad-hoc process│       │ - Document       │       │ - Compliant     │
+└─────────────────┘       └──────────────────┘       └─────────────────┘
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Call to Action -->
+    <mat-card class="cta-card">
+      <mat-card-content>
+        <h3>🚀 Ready to explore?</h3>
+        <p>Navigate to <strong>Continuous Clearing</strong> to learn about automated compliance, or check out the <strong>CI/CD Demo</strong> to see reusable GitHub Actions in action!</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

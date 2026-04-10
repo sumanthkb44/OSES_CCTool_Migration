@@ -1,0 +1,278 @@
+<div class="container">
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading CI/CD demo...</p>
+  </div>
+
+  <!-- Error message -->
+  <mat-card *ngIf="error" class="error-card">
+    <mat-card-content>
+      <h2>⚠️ Error</h2>
+      <p>{{ error }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- CI/CD Demo Content -->
+  <div *ngIf="!loading && yamlContent">
+    <mat-card class="hero-card">
+      <mat-card-content>
+        <h1>🔧 CI/CD Demo: Reusable GitHub Actions</h1>
+        <p class="description">Learn how to create and use reusable GitHub Actions workflows for Continuous Clearing</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tabs for different sections -->
+    <mat-tab-group>
+      <!-- Overview Tab -->
+      <mat-tab label="Overview">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-content>
+              <h2>What are Reusable Workflows?</h2>
+              <p>
+                Reusable workflows are GitHub Actions workflows that can be called from other workflows.
+                This promotes the <strong>DRY (Don't Repeat Yourself)</strong> principle and allows you to:
+              </p>
+              <ul>
+                <li><strong>Centralize logic:</strong> Define workflow logic once and reuse it across multiple repositories</li>
+                <li><strong>Simplify maintenance:</strong> Update the workflow in one place and all callers benefit</li>
+                <li><strong>Ensure consistency:</strong> Same process runs everywhere with the same steps</li>
+                <li><strong>Parameterize behavior:</strong> Pass inputs to customize workflow execution</li>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-content>
+              <h2>How Reusable Workflows Work</h2>
+              <div class="diagram">
+┌─────────────────────────────────────────┐
+│  Repository A                           │
+│  .github/workflows/ci.yml               │
+│  ┌────────────────────────────────────┐ │
+│  │ jobs:                              │ │
+│  │   call-clearing:                   │ │
+│  │     uses: ./.github/workflows/     │ │
+│  │           continuous-clearing.yml  │ │
+│  │     with:                          │ │
+│  │       sbom-format: spdx           │ │
+│  └────────────┬───────────────────────┘ │
+└───────────────┼─────────────────────────┘
+                │
+                v
+┌─────────────────────────────────────────┐
+│  Reusable Workflow                      │
+│  .github/workflows/                     │
+│  continuous-clearing.yml                │
+│  ┌────────────────────────────────────┐ │
+│  │ on:                                │ │
+│  │   workflow_call:                   │ │
+│  │     inputs:                        │ │
+│  │       sbom-format: ...            │ │
+│  │                                    │ │
+│  │ jobs:                              │ │
+│  │   clearing:                        │ │
+│  │     steps:                         │ │
+│  │       - Scan dependencies          │ │
+│  │       - Check licenses             │ │
+│  │       - Generate SBOM              │ │
+│  └────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-content>
+              <h2>Artifact-Based Input Passing</h2>
+              <p>
+                In GitHub Actions, jobs can communicate by uploading and downloading artifacts.
+                This is especially useful for passing build outputs or dependencies to subsequent jobs:
+              </p>
+              <div class="diagram">
+┌────────────────────────┐
+│  Job 1: Build          │
+│  ─────────────────     │
+│  - Compile code        │
+│  - Collect deps        │
+│  - Upload artifact     │
+└───────┬────────────────┘
+        │
+        │ [Artifact: dependencies.zip]
+        │
+        v
+┌────────────────────────┐
+│  Job 2: Clear          │
+│  ─────────────────     │
+│  - Download artifact   │
+│  - Scan dependencies   │
+│  - Generate SBOM       │
+│  - Upload SBOM         │
+└───────┬────────────────┘
+        │
+        │ [Artifact: sbom.json]
+        │
+        v
+┌────────────────────────┐
+│  Job 3: Deploy         │
+│  ─────────────────     │
+│  - Download SBOM       │
+│  - Verify compliance   │
+│  - Deploy to prod      │
+└────────────────────────┘
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-content>
+              <h2>SBOM Generation</h2>
+              <p>
+                <strong>SBOM (Software Bill of Materials)</strong> is a machine-readable inventory of all components in your software.
+                It includes:
+              </p>
+              <ul>
+                <li><strong>Component names:</strong> All dependencies (direct and transitive)</li>
+                <li><strong>Versions:</strong> Exact version numbers for reproducibility</li>
+                <li><strong>Licenses:</strong> License information for compliance</li>
+                <li><strong>Vulnerabilities:</strong> Known CVEs associated with components</li>
+                <li><strong>Relationships:</strong> Dependency graph showing how components relate</li>
+              </ul>
+              <p>
+                SBOMs are critical for supply chain security, compliance audits, and vulnerability management.
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- YAML Viewer Tab -->
+      <mat-tab label="Reusable Workflow YAML">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-content>
+              <div class="yaml-header">
+                <h2>Continuous Clearing Reusable Workflow</h2>
+                <button mat-raised-button color="primary" (click)="copyToClipboard()">
+                  <mat-icon>content_copy</mat-icon>
+                  Copy YAML
+                </button>
+              </div>
+              <p>This is a fully functional reusable workflow for Continuous Clearing. Save it as <code>.github/workflows/continuous-clearing.yml</code> in your repository.</p>
+              <pre class="yaml-content">{{ yamlContent }}</pre>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- How to Use Tab -->
+      <mat-tab label="How to Use">
+        <div class="tab-content">
+          <mat-card>
+            <mat-card-content>
+              <h2>Using the Reusable Workflow</h2>
+              <p>To use the Continuous Clearing reusable workflow in your repository, create a caller workflow:</p>
+              
+              <h3>Step 1: Create the reusable workflow</h3>
+              <p>Save the reusable workflow YAML (from the "Reusable Workflow YAML" tab) to:</p>
+              <code class="file-path">.github/workflows/continuous-clearing.yml</code>
+
+              <h3>Step 2: Create a caller workflow</h3>
+              <p>Create a new workflow file that calls the reusable workflow:</p>
+              <code class="file-path">.github/workflows/ci.yml</code>
+              <pre class="yaml-content">name: CI Pipeline with Continuous Clearing
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Call the reusable Continuous Clearing workflow
+  continuous-clearing:
+    name: Run Continuous Clearing
+    uses: ./.github/workflows/continuous-clearing.yml
+    with:
+      sbom-format: spdx
+      fail-on-critical: true
+      working-directory: ./frontend
+
+  # After clearing passes, run other jobs
+  build:
+    name: Build Application
+    needs: continuous-clearing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout&#64;v4
+      - name: Build
+        run: npm run build</pre>
+
+              <h3>Step 3: Customize with inputs</h3>
+              <p>The reusable workflow accepts these inputs:</p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Input</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>sbom-format</code></td>
+                    <td>string</td>
+                    <td>spdx</td>
+                    <td>SBOM format (spdx or cyclonedx)</td>
+                  </tr>
+                  <tr>
+                    <td><code>fail-on-critical</code></td>
+                    <td>boolean</td>
+                    <td>true</td>
+                    <td>Fail build on critical vulnerabilities</td>
+                  </tr>
+                  <tr>
+                    <td><code>working-directory</code></td>
+                    <td>string</td>
+                    <td>.</td>
+                    <td>Directory to scan (for monorepos)</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>Step 4: Access outputs</h3>
+              <p>The workflow outputs the SBOM artifact name, which you can use in subsequent jobs:</p>
+              <pre class="yaml-content">jobs:
+  clearing:
+    uses: ./.github/workflows/continuous-clearing.yml
+  
+  deploy:
+    needs: clearing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download SBOM
+        uses: actions/download-artifact&#64;v4
+        with:
+          name: ${{ '{{' }} needs.clearing.outputs.sbom-artifact {{ '}}' }}</pre>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="cta-card">
+            <mat-card-content>
+              <h3>🎓 Next Steps</h3>
+              <ul>
+                <li>Copy the reusable workflow YAML to your repository</li>
+                <li>Create a caller workflow in your CI pipeline</li>
+                <li>Customize inputs based on your project needs</li>
+                <li>Monitor the workflow runs in GitHub Actions tab</li>
+                <li>Download and review the generated SBOM artifacts</li>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
