@@ -1,12 +1,8 @@
 # ============================================================
 # License Clearance Workflow
 # ============================================================
-# This workflow demonstrates the OSES (Open Source Engineering Stack) 
-# approach to automated license compliance and vulnerability scanning.
-#
-# Workflow Overview:
-# 1. Build & Restore - Prepares the project and generates dependency metadata
-# 2. Continuous Clearing - Performs license scanning, vulnerability checks, and SBOM generation
+# This workflow demonstrates 
+# approach to automated license compliance.
 #
 # Key Concepts:
 # - Build job restores dependencies and uploads project metadata as artifacts
@@ -91,9 +87,7 @@ jobs:
   # The clearing process includes:
   # 1. Download cc-input artifact from build job
   # 2. License detection - Identifies all OSS licenses in dependencies
-  # 3. Vulnerability scanning - Checks dependencies against CVE databases
-  # 4. SBOM generation - Creates Software Bill of Materials in SPDX/CycloneDX format
-  # 5. Policy enforcement - Fails build if compliance violations are found
+  # 3. SBOM generation - Creates Software Bill of Materials in SPDX/CycloneDX format
   #
   # This uses a centralized reusable workflow from sumanthkb44/.github repository
   # for standardized clearing across multiple projects
