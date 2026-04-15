@@ -1,103 +1,103 @@
-# ============================================================
-# License Clearance Workflow
-# ============================================================
-# This workflow demonstrates 
-# approach to automated license compliance.
-#
-# Key Concepts:
-# - Build job restores dependencies and uploads project metadata as artifacts
-# - Continuous Clearing job downloads artifacts and performs compliance scanning
-# - Uses a reusable workflow from external repository for standardized clearing process
-#
-# Triggers:
-# - On push to master branch
-# - On pull requests to any branch
-# - Manual workflow dispatch via GitHub UI
-# ============================================================
+# # ============================================================
+# # License Clearance Workflow
+# # ============================================================
+# # This workflow demonstrates 
+# # approach to automated license compliance.
+# #
+# # Key Concepts:
+# # - Build job restores dependencies and uploads project metadata as artifacts
+# # - Continuous Clearing job downloads artifacts and performs compliance scanning
+# # - Uses a reusable workflow from external repository for standardized clearing process
+# #
+# # Triggers:
+# # - On push to master branch
+# # - On pull requests to any branch
+# # - Manual workflow dispatch via GitHub UI
+# # ============================================================
 
-name: License Clearance
+# name: License Clearance
 
-on:
-  # Trigger on push to master branch
-  push:
-    branches: [ master ]
+# on:
+#   # Trigger on push to master branch
+#   push:
+#     branches: [ master ]
   
-  # Trigger on all pull requests
-  pull_request:
+#   # Trigger on all pull requests
+#   pull_request:
   
-  # Allow manual triggering from GitHub Actions UI
-  workflow_dispatch:
+#   # Allow manual triggering from GitHub Actions UI
+#   workflow_dispatch:
 
-jobs:
-  # ============================================================
-  # Job 1: Build & Restore
-  # ============================================================
-  # This job prepares the .NET project and generates dependency metadata files
-  # that will be consumed by the Continuous Clearing job.
-  #
-  # Key outputs:
-  # - project.assets.json: Contains full dependency graph (direct & transitive)
-  # - obj/ directories: Build metadata and intermediate files
-  # - Pipeline artifact 'cc-input': Project folders uploaded for clearing analysis
-  # ============================================================
-  build:
-    name: Build & Restore
-    runs-on: ubuntu-latest
+# jobs:
+#   # ============================================================
+#   # Job 1: Build & Restore
+#   # ============================================================
+#   # This job prepares the .NET project and generates dependency metadata files
+#   # that will be consumed by the Continuous Clearing job.
+#   #
+#   # Key outputs:
+#   # - project.assets.json: Contains full dependency graph (direct & transitive)
+#   # - obj/ directories: Build metadata and intermediate files
+#   # - Pipeline artifact 'cc-input': Project folders uploaded for clearing analysis
+#   # ============================================================
+#   build:
+#     name: Build & Restore
+#     runs-on: ubuntu-latest
 
-    steps:
-      # Check out the repository source code
-      - name: Checkout source
-        uses: actions/checkout@v4
+#     steps:
+#       # Check out the repository source code
+#       - name: Checkout source
+#         uses: actions/checkout@v4
 
-      # Set up the .NET SDK environment
-      # Version 8.0.x is the current LTS (Long Term Support) release
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+#       # Set up the .NET SDK environment
+#       # Version 8.0.x is the current LTS (Long Term Support) release
+#       - name: Setup .NET
+#         uses: actions/setup-dotnet@v4
+#         with:
+#           dotnet-version: '8.0.x'
 
-      # Restore NuGet packages and generate dependency metadata
-      # This creates project.assets.json which contains the full dependency graph
-      # Targets the backend project specifically
-      - name: Restore dependencies
-        run: dotnet restore backend/backend.csproj
+#       # Restore NuGet packages and generate dependency metadata
+#       # This creates project.assets.json which contains the full dependency graph
+#       # Targets the backend project specifically
+#       - name: Restore dependencies
+#         run: dotnet restore backend/backend.csproj
 
-      # Verify that project.assets.json was generated correctly
-      # This file contains the complete dependency information needed for clearing
-      - name: Verify project.assets.json
-        run: |
-          find backend -name project.assets.json
+#       # Verify that project.assets.json was generated correctly
+#       # This file contains the complete dependency information needed for clearing
+#       - name: Verify project.assets.json
+#         run: |
+#           find backend -name project.assets.json
 
-      # Upload the restored project folders as pipeline artifact
-      # The 'cc-input' artifact contains all project metadata needed for Continuous Clearing
-      # This includes: project.assets.json, *.csproj files, and obj/ directories
-      - name: Upload CC input artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cc-input
-          path: |
-            backend
+#       # Upload the restored project folders as pipeline artifact
+#       # The 'cc-input' artifact contains all project metadata needed for Continuous Clearing
+#       # This includes: project.assets.json, *.csproj files, and obj/ directories
+#       - name: Upload CC input artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: cc-input
+#           path: |
+#             backend
 
-  # ============================================================
-  # Job 2: Continuous Clearing
-  # ============================================================
-  # This job performs automated license compliance and vulnerability scanning.
-  # It depends on the 'build' job to ensure dependency metadata is available.
-  #
-  # The clearing process includes:
-  # 1. Download cc-input artifact from build job
-  # 2. License detection - Identifies all OSS licenses in dependencies
-  # 3. SBOM generation - Creates Software Bill of Materials in SPDX/CycloneDX format
-  #
-  # This uses a centralized reusable workflow from sumanthkb44/.github repository
-  # for standardized clearing across multiple projects
-  # ============================================================
-  clearing:
-    name: Continuous Clearing
-    needs: build  # Only runs after 'build' job completes successfully
+#   # ============================================================
+#   # Job 2: Continuous Clearing
+#   # ============================================================
+#   # This job performs automated license compliance and vulnerability scanning.
+#   # It depends on the 'build' job to ensure dependency metadata is available.
+#   #
+#   # The clearing process includes:
+#   # 1. Download cc-input artifact from build job
+#   # 2. License detection - Identifies all OSS licenses in dependencies
+#   # 3. SBOM generation - Creates Software Bill of Materials in SPDX/CycloneDX format
+#   #
+#   # This uses a centralized reusable workflow from sumanthkb44/.github repository
+#   # for standardized clearing across multiple projects
+#   # ============================================================
+#   clearing:
+#     name: Continuous Clearing
+#     needs: build  # Only runs after 'build' job completes successfully
     
-    # Call the external reusable Continuous Clearing workflow
-    # Format: {owner}/{repo}/.github/workflows/{filename}@{ref}
-    uses: sumanthkb44/.github/.github/workflows/continuous-clearing.yml@main
-    # Alternative: Use local reusable workflow
-    # uses: ./.github/workflows/continuous-clearing.yml
+#     # Call the external reusable Continuous Clearing workflow
+#     # Format: {owner}/{repo}/.github/workflows/{filename}@{ref}
+#     uses: sumanthkb44/.github/.github/workflows/continuous-clearing.yml@main
+#     # Alternative: Use local reusable workflow
+#     # uses: ./.github/workflows/continuous-clearing.yml
