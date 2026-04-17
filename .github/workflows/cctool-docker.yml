@@ -108,7 +108,7 @@ jobs:
 
     # Reference the shared reusable workflow from the central template repository.
     # Pin to a specific SHA or tag in production for supply-chain security.
-    uses: siemens/continuous-clearing/.github/workflows/continuous-clearing.yml@feature/github_action_template
+    uses: siemens/continuous-clearing/.github/workflows/continuous-clearing-docker.yml@feature/github_action_template
 
     # Pass the secrets required by the clearing stages.
     # 'inherit' forwards all repository/environment secrets automatically.
